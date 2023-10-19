@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>JSON 2</title>
+    <style>
+        body {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+        }
+
+        .product-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center; 
+            margin: 0 -20px;
+        }
+
+        .product {
+            background-color: #fff;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: calc(33.33% - 40px);
+            margin: 20px;
+            padding: 20px;
+            text-align: center;
+        }
+
+        .product h3 {
+            font-size: 24px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .product p {
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 10px;
+        }
+
+        .product strong {
+            font-weight: bold;
+            color: #666;
+        }
+
+        .product .price {
+            font-size: 20px;
+            font-weight: bold;
+            color: #9a8f8f;
+        }
+
+        .product .categories {
+            display: block;
+        }
+
+        .product .category {
+            display: inline-block;
+            padding: 5px 10px;
+            margin-right: 5px;
+            color: #fff;
+            border-radius: 20px;
+            font-size: 14px;
+        }
+
+        .product ul {
+            list-style: none;
+        }
+
+        h1 {
+            font-size: 36px;
+            color: goldenrod;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dainty Jewelry</h1>
+    <div id="json-container">
+        <div class="product-container"></div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // .get from jQuery
+        $.get('products.json', function(data) {
+            var productContainer = document.querySelector('.product-container');
+
+            data.products.forEach(product => {
+                var productHTML = '<div class="product">';
+                productHTML += '<h3>' + product.name + '</h3>';
+                productHTML += '<p><strong>Description:</strong> ' + product.description + '</p>';
+                productHTML += '<p><strong>Size:</strong> ' + product.size + '</p>';
+                productHTML += '<p class="price"><strong>Price:</strong> ' + product.price + '</p>';
+                productHTML += '<p class="categories"><strong>Categories:</strong> ' + product.categories.join(', ') + '</p>';
+                productHTML += '</div>';
+                productContainer.innerHTML += productHTML;
+            });
+        })
+        .fail(function() { // error handling
+            console.error('Error fetching data.');
+        });
+    </script>
+</body>
+</html>
