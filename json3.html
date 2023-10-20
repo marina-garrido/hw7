@@ -114,14 +114,19 @@
                     console.error('Error getting data.');
                 });
     
-            function populateDropdown(data) {
+            function populateCategoryDropdown(data) {
                 const categoryDropdown = $('#categoryDropdown');
-    
-                const uniqueCategories = getCategories(data); // return as an array
-    
-                uniqueCategories.forEach(category => {
-                    categoryDropdown.append(createOption(category)); // add data to the options
+                const uniqueCategories = {};
+
+                data.products.forEach(product => {
+                    product.categories.forEach(category => {
+                        uniqueCategories[category] = true;
+                    });
                 });
+
+                for (const category in uniqueCategories) {
+                    categoryDropdown.append(createCategoryOption(category));
+                }
             }
     
             function getCategories(data) {
