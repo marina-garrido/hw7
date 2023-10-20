@@ -1,119 +1,31 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>JSON 3</title>
-    <style> 
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: center;
-            font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
-        }
-
-        .product-container {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin: 0 -20px;
-        }
-
-        .product {
-            background-color: #fff;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            width: calc(33.33% - 40px);
-            margin: 20px;
-            padding: 20px;
-            text-align: center;
-        }
-
-        .product h3 {
-            font-size: 24px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .product p {
-            font-size: 16px;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .product strong {
-            font-weight: bold;
-            color: #666;
-        }
-
-        .product .price {
-            font-size: 20px;
-            font-weight: bold;
-            color: #9a8f8f;
-        }
-
-        .product .categories {
-            display: block;
-        }
-
-        .product .category {
-            display: inline-block;
-            padding: 5px 10px;
-            margin-right: 5px;
-            background-color: #fec371f1;
-            color: #fff;
-            border-radius: 20px;
-            font-size: 14px;
-        }
-
-        /* Remove list-style from ul */
-        .product ul {
-            list-style: none;
-        }
-
-        h1 {
-            font-size: 36px;
-            color: goldenrod;
-        }
-
-        .filter-box {
-        background-color: #f2f2f2;
-        border: 1px solid #ccc;
-        border-radius: 5px;
-        padding: 20px;
-        margin: 20px;
-        width: 300px;
-        }
-
-        .filter-box button {
-        margin-top: 20px;
-        background-color: #fec371;
-        color: #fff;
-        border: none;
-        border-radius: 5px;
-        padding: 10px 20px;
-        font-size: 16px;
-        cursor: pointer;
-    }
-        .filter-box button:hover {
-        background-color: #fcd092;
-    }
-    
-    </style>
+    <title>Filter Products by Category</title>
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h2>Filter Products</h2>
+    <form id="filterForm">
+        <label for="categoryDropdown">Select a Category:</label>
+        <select id="categoryDropdown"></select>
+        <button type="button" id="filterButton">Filter</button>
+    </form>
+    <div id="result"></div>
 
     <script>
         $(document).ready(function() {
-            let productsData = null;
-            
-            $.get('products.json') // read file
+            let productData = null;
+
+            $.get('products.json')
                 .done(function(data) {
-                    productsData = data;
-                    populateDropdown(data); 
+                    productData = data;
+                    populateCategoryDropdown(data);
                 })
-                .fail(function() { // error handling
+                .fail(function() {
                     console.error('Error getting data.');
                 });
-    
+
             function populateCategoryDropdown(data) {
                 const categoryDropdown = $('#categoryDropdown');
                 const uniqueCategories = {};
@@ -128,71 +40,39 @@
                     categoryDropdown.append(createCategoryOption(category));
                 }
             }
-    
-            function getCategories(data) {
-                const uniqueCategories = []; // empty array to be populated
-                data.products.forEach(product => { // go through each product
-                    product.categories.forEach(category => { // go through each category
-                        if (!uniqueCategories.includes(category)) {
-                            uniqueCategories.push(category);
-                        }
-                    });
-                });
-                return uniqueCategories; // return array
-            }
-    
-            function createOption(category) {
+
+            function createCategoryOption(category) {
                 return $('<option>', {
                     value: category,
                     text: category
                 });
             }
-            
-            // handle the click event 
+
             $('#filterButton').click(function() {
-                const categoryDropdown = $('#categoryDropdown')[0]; // get element 
-
-                const selectedCategory = categoryDropdown.options[categoryDropdown.selectedIndex].value; // get category
-
-                const filteredProducts = filterProducts(productsData, selectedCategory); // filter
-
-                displayProducts(filteredProducts); // display
+                const selectedCategory = $('#categoryDropdown').val();
+                const filteredProducts = filterProductsByCategory(productData, selectedCategory);
+                displayFilteredProducts(filteredProducts);
             });
 
-            
-            function filterProducts(data, category) { // filter products
+            function filterProductsByCategory(data, category) {
                 return data.products.filter(product => product.categories.includes(category));
             }
-    
-            function displayProducts(filteredProducts) {
+
+            function displayFilteredProducts(filteredProducts) {
                 const result = $('#result');
-                result.empty(); // clear previous filter results so it doesn't show it with the new one
+                result.empty();
 
                 filteredProducts.forEach(product => {
-                    const productName = createParagraphElement(product.name);
-                    result.append(productName); // insert content with append
+                    result.append(createParagraphElement(product.name));
                 });
             }
-            
-            // for aesthetic
-            function createParagraphElement(text) { 
-                return $('<p>').text(text); // set text content to the provided text
+
+            function createParagraphElement(text) {
+                return $('<p>').text(text);
             }
         });
-    
     </script>
-</head>
-<body>
-        <h1>Filter Products</h1>
-        <div class="filter-box">
-            <form>
-                <label for="categoryDropdown">Select a category:</label>
-                <select id="categoryDropdown"></select>
-                <button type="button" id="filterButton">Filter</button>
-            </form>
-        </div>
-        <div id="result"></div>
-    </body>
-    
-
+</body>
 </html>
+
+  
